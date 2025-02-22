@@ -30,17 +30,31 @@ class Server:
             thread1=threading.Thread(target=self.authenticate_log_in, args=(client_socket,addr))        
             thread1.start()
 
-
-
+    def commns_with_client(self,client_socket):
+        while True:
+            data=client_socket.recv(1024).decode()
+            data=json.loads(data)
+            command=data.get("command")
+            if command=="add-file":
+                file_name=data.get("file-name")
+                file_hash=data.get("file-hash")
+                peer_id=data.get("peer-id")
+                mongo_setup.add_file(peer_id,file_hash,file_name)
+            elif command=="files-list":
+                client_socket.sendall(str(self.available_files()).encode("utf-8"))
+    
     def add_daemon_to_db(self,client_socket):
         try:
-            peer_id=client_socket.recv(1024).decode()
+            data=client_socket.recv(1024).decode()
+            data=json.loads(data)
+            peer_id=data.get("peer-id")
 
             print(f"Received peer ID: {peer_id}")
             data={"peer_id":peer_id}
             mongo_setup.add_daemon_to_mongo(data)
             print("Added peer ID to DB immediately.")
             self.inform_users_bootstrap(peer_id)
+            self.commns_with_client(client_socket)
         except Exception as e:
             print(f"Error in add_daemon_to_db: {e}")
 
@@ -79,6 +93,8 @@ class Server:
                 print(f"Client {addr} failed to log in")
                 self.send_message(client_socket, "failed_log_in", addr)
             
-
+    def available_files(self):
+        file_list=mongo_setup.get_files_available()
+        return file_list
 
 exm=Server("0.0.0.0")

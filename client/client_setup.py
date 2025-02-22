@@ -47,22 +47,7 @@ class setup:
         except Exception as e:
             print(f"Error resolving path: {e}")
             return None
-    '''
-    def __init__(self, setup_type,client_socket):
-
-        
-        
-        self.setup_type = setup_type
-        self.client_socket=client_socket
-        # Determine the base directory of the script
-        self.script_dir = os.path.dirname(os.path.abspath(__file__))  # This gets to the client folder
-        self.parent_dir = os.path.dirname(self.script_dir)
-        print(f"path: {self.parent_dir}")
-        self.dependencies_bat = os.path.join(self.parent_dir, "config", "dependencies-1.bat")
-        self.ipfs_config_bat = os.path.join(self.parent_dir, "config", "ipfs_config.bat")
-    '''
-        
-        
+     
     def total_setup(self):
         try:
             print("Entered total setup.")
