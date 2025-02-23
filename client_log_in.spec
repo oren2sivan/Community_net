@@ -2,10 +2,10 @@
 
 
 a = Analysis(
-    ['C:\\Users\\ORENS\\תכנות\\VENV\\venv_oren\\project\\client\\client_log_in.py'],
+    ['client\\client_log_in.py'],
     pathex=[],
     binaries=[],
-    datas=[('config\\dependencies-1.bat', 'config'), ('config\\ipfs_config.bat', 'config')],
+    datas=[('config/dependencies-1.bat', 'config'), ('config/ipfs_config.bat', 'config')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

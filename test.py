@@ -1,1 +1,3 @@
-print(":hello my name is oren")
+import socket
+
+print(socket.gethostbyname(socket.gethostname()))
