@@ -133,8 +133,11 @@ class IPFSCommands:
             
             if not file_list:
                 print("No files available")
+                self.files = {}
                 return
-                
+            
+            self.files = {file_hash: file_name.strip() for file_name, file_hash in file_list}    
+
             for index, (file_name, file_hash) in enumerate(file_list):
                 print(f"File {index}:")
                 print(f"  Name: {file_name.strip()}")
@@ -143,6 +146,13 @@ class IPFSCommands:
         except Exception as e:
             print(f"Error in available_files: {e}")
             raise
+
+    def format_file(self,file_name,file_hash):
+        files_locally=subprocess.run("dir",shell=True,capture_output=True,text=True)
+        files_locally_names=files_locally.stdout
+        if file_hash in files_locally_names:
+            change_name=subprocess.run(f"ren {file_hash} {file_name}",shell=True,capture_output=True,text=True)
+            move_file=subprocess.run(f"move {file_name} %USERPROFILE%/Downloads",shell=True,capture_output=True,text=True)
 
     def execute_command(self):
         try:
@@ -165,6 +175,7 @@ class IPFSCommands:
                 try:
                     if command.lower() == 'files-list':
                         self.available_files()
+                    
                     else:
                         full_command = f"ipfs {command}"
                         result = subprocess.run(full_command, shell=True, capture_output=True, text=True)
@@ -180,6 +191,10 @@ class IPFSCommands:
                                     file_hash = parts[1]
                                     file_name = parts[2]
                                     self.add_file_to_server(file_hash, file_name)
+                            elif command.lower().startswith("get"):
+                                file_hash=command.split(" ")[1]
+                                file_name=self.files[file_hash]
+                                self.format_file(file_name,file_hash)
                                     
                         if result.stderr:
                             print("Error:", result.stderr)
